@@ -1,0 +1,59 @@
+# XLode for AmigaOS 3.x / AmiCradle, 68040 + FPU, on acsdl12.
+#
+#   make -f amiga/Makefile.amigaos STOVE=/path/to/os32-gcc16/prefix \
+#        NDK=/path/to/gfopensdk/OpenNDK/Include_H \
+#        ACSDL=/path/to/amicradle-guest/gameports/acsdl12
+#
+# STOVE is GFOpenAmigaGCC 16.2.0-open4 or later. ACSDL is acsdl12, built with
+# its own Makefile.amigaos. The game is built at 320x200 (SIZE_320_200) from
+# the 8-bit PNGs in amiga/gfx (made from 320/*.bmp by amiga/convert_gfx.py).
+# Output: build/amigaos/XLode/ with the program, its pictures, sounds and
+# stages beside it, and the icons.
+
+STOVE   ?= $(HOME)/AmiCradle/stoves/os32-gcc16/prefix
+NDK     ?= $(HOME)/AmiCradle/gfopensdk/OpenNDK/Include_H
+ACSDL   ?= ../amicradle-guest/gameports/acsdl12
+ACGAME  ?= $(ACSDL)/../acgame
+CC      = $(STOVE)/bin/m68k-amigaos-gcc
+CPU     ?= -m68040 -m68881
+OPT     ?= -O2 -fomit-frame-pointer
+CFLAGS  = -noixemul -std=gnu99 $(OPT) $(CPU) -fcommon -Wall -Wno-unused-variable \
+          -Wno-unused-but-set-variable -Wno-unused-result \
+          -DSIZE_320_200 \
+          -I$(ACSDL)/include/SDL -I$(ACSDL)/include -I$(ACGAME)/include -I$(NDK)
+LDFLAGS = -noixemul $(CPU)
+BUILD   = build/amigaos
+OUT     = $(BUILD)/XLode
+
+OBJS    = $(BUILD)/xlode.o $(BUILD)/progdir.o $(BUILD)/stack.o
+DATA    = $(wildcard amiga/gfx/*.png) $(wildcard *.wav) $(wildcard stage*.map)
+ICONS   = amiga/icons/XLode-drawer.info amiga/icons/xlode.info amiga/icons/ReadMe.info amiga/icons/LICENSE.info
+
+all: $(OUT)/xlode
+
+$(OUT)/xlode: $(OBJS) $(DATA) $(ICONS) AMIGA_PORT.md | $(OUT)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(ACSDL)/build/amigaos/libacsdl12.a -lm
+	cp $(DATA) $(OUT)/
+	cp AMIGA_PORT.md $(OUT)/ReadMe
+	cp LICENSE $(OUT)/LICENSE
+	cp amiga/icons/xlode.info amiga/icons/ReadMe.info amiga/icons/LICENSE.info $(OUT)/
+	cp amiga/icons/XLode-drawer.info $(BUILD)/XLode.info
+
+# xlode.c takes in GFX_SDL.c, IO_SDL.c and the rest.
+# Its 2001 code warns of assignments in conditions, a "==" meant as "=" when
+# the hidden stairs show (they work all the same), main's argv and two
+# functions whose results are not used; left as they are upstream.
+UPSTREAM_W = -Wno-parentheses -Wno-unused-value -Wno-main -Wno-return-type
+$(BUILD)/xlode.o: xlode.c sizes.h GFX_SDL.c IO_SDL.c LIB_SDL.c SFX_SDL_mixer.c MUS_SDL_mixer.c | $(BUILD)
+	$(CC) $(CFLAGS) $(UPSTREAM_W) -c -o $@ $<
+
+$(BUILD)/%.o: amiga/%.c | $(BUILD)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(BUILD) $(OUT):
+	mkdir -p $@
+
+clean:
+	rm -rf $(BUILD)
+
+.PHONY: all clean

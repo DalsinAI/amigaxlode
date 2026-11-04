@@ -64,13 +64,24 @@
    #define Ci_deltaY 2
 
    #define Ci_numberWidth 8
+#ifdef __amigaos__
+   /* The 320/ digits are 13 to 16 rows high: clear all of them when the
+      score changes, not the top 8 rows. */
+   #define Ci_numberHeight 16
+#else
    #define Ci_numberHeight 8
+#endif
 
    #define Ci_menuIconX 130
    #define Ci_menuIconY 128
    #define Ci_menuIconDelta 20
 
+#ifdef __amigaos__
+   /* the 8-bit PNGs of amiga/gfx, beside the program (amiga/convert_gfx.py) */
+   #define RES_DIR ""
+#else
    #define RES_DIR "320/"
+#endif
 
 #endif
 

@@ -5,7 +5,13 @@
 typedef Mix_Chunk SFX_Sample;
 
 void SFX_Init() {
+#ifdef __amigaos__
+   /* acsdl12 mixes mono in the machine's byte order; the samples are
+      11025 and 22050 Hz mono. */
+   Mix_OpenAudio(22050, AUDIO_S16SYS, 1, 1024);
+#else
    Mix_OpenAudio(44100, AUDIO_S16LSB, 2, 4096);
+#endif
    Mix_AllocateChannels(32);
    Mix_ReserveChannels(4);
 }

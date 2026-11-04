@@ -5,6 +5,24 @@ typedef SDL_Surface GFX_Image;
 
 SDL_Surface* framebuffer;
 
+#ifdef __amigaos__
+/* acsdl12 has 8-bit surfaces only and no SDL_LoadBMP. The pictures are
+   8-bit PNGs sharing one palette (amiga/convert_gfx.py): 0 is black,
+   255 is the magenta colour key. The screen and the game's buffers get
+   the same palette, so every blit is a plain copy. */
+#include <SDL/SDL_image.h>
+#include <string.h>
+
+#define GFX_KEY_INDEX 255
+
+static SDL_Color gfx_palette[256];
+
+static void GFX_Fail(const char* what, const char* name) {
+   fprintf(stderr, "XLode: %s %s: %s\n", what, name, SDL_GetError());
+   exit(20);                  /* SDL_Quit runs at exit (amiga/progdir.c) */
+}
+#endif
+
 void GFX_Done() {
 }
 
@@ -14,14 +32,34 @@ void GFX_Free(GFX_Image* image) {
 
 GFX_Image* GFX_Load(char* filename) {
    GFX_Image* image;
+#ifdef __amigaos__
+   char name[64];
+   char* dot;
+   strncpy(name, filename, sizeof(name) - 5);
+   name[sizeof(name) - 5] = 0;
+   dot = strrchr(name, '.');
+   strcpy(dot ? dot : name + strlen(name), ".png");
+   image = IMG_Load(name);
+   if (!image)
+      GFX_Fail("cannot load", name);
+   SDL_SetColorKey(image, SDL_SRCCOLORKEY, GFX_KEY_INDEX);
+#else
    image = SDL_LoadBMP(filename);
    SDL_SetColorKey(image, SDL_SRCCOLORKEY|SDL_RLEACCEL, 0xff00ff);
+#endif
    return image;
 }
 
 GFX_Image* GFX_CreateBlank(int w, int h) {
    GFX_Image* image;
+#ifdef __amigaos__
+   image = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
+   if (!image)
+      GFX_Fail("cannot make", "a buffer");
+   SDL_SetColors(image, gfx_palette, 0, 256);
+#else
    image = SDL_CreateRGBSurface(0, w, h, 16, 0, 0, 0, 0);
+#endif
    return image;
 }
 
@@ -58,8 +96,25 @@ void GFX_FillRectangle(GFX_Image* dest, int x1, int y1, int x2, int y2, int colo
 }
 
 int GFX_Init(int resX, int resY, int depth) {
+#ifdef __amigaos__
+   SDL_Surface* palette_source;
+   SDL_Init(SDL_INIT_VIDEO);
+   framebuffer = SDL_SetVideoMode(resX, resY, 8, SDL_HWSURFACE|SDL_DOUBLEBUF);
+   if (!framebuffer)
+      GFX_Fail("cannot open", "the screen");
+   SDL_WM_SetCaption("XLode", "XLode");
+   SDL_ShowCursor(SDL_DISABLE);
+   palette_source = IMG_Load(RES_DIR "background.png");
+   if (!palette_source)
+      GFX_Fail("cannot load", RES_DIR "background.png");
+   memcpy(gfx_palette, palette_source->format->palette->colors, sizeof(gfx_palette));
+   SDL_FreeSurface(palette_source);
+   SDL_SetColors(framebuffer, gfx_palette, 0, 256);
+   SDL_FillRect(framebuffer, NULL, 0);
+#else
    SDL_Init(SDL_INIT_VIDEO);
    framebuffer = SDL_SetVideoMode(resX, resY, depth, SDL_HWSURFACE|SDL_DOUBLEBUF);
+#endif
    return 1;
 }
 
