@@ -1,0 +1,23 @@
+{
+  "about": "The Workbench icons of the XLode drawer: python3 AMICRADLE/scripts/port_icons.py amiga/icons/icons.json --out amiga/icons (DalsinAI/amicradle). The art is XLode's own runner (640/lode.bmp, magenta made clear). XLode-drawer.info is the drawer's own icon, XLode.info beside the drawer; it has its own name here so as not to meet xlode.info on a disk that ignores case.",
+  "drawer": {
+    "name": "XLode",
+    "file": "XLode-drawer.info"
+  },
+  "badge": "art/xlode.png",
+  "icons": [
+    {
+      "file": "xlode.info",
+      "kind": "tool",
+      "stack": 131072
+    },
+    {
+      "file": "ReadMe.info",
+      "kind": "readme"
+    },
+    {
+      "file": "LICENSE.info",
+      "kind": "readme"
+    }
+  ]
+}

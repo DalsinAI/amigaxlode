@@ -26,10 +26,22 @@
 #define IO_KEY_RSHIFT SDLK_RSHIFT
 #define IO_KEY_END SDLK_END
 
+#ifdef __amigaos__
+typedef Uint8 IO_Key;
+
+/* The Amiga has no End key (dig right); Help, above the cursor keys
+   beside Del, is End here. O and R dig right as well. */
+#define IO_AMIGA_RAWKEY_HELP 0x5f
+
+void IO_Init() {
+   ACSDL_SetKeyMap(IO_AMIGA_RAWKEY_HELP, SDLK_END);
+}
+#else
 typedef char IO_Key;
 
 void IO_Init() {
 }
+#endif
 
 void IO_Done() {
 }

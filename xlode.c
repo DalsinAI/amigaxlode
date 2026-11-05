@@ -689,6 +689,10 @@ void Player_draw(Player r_this) {
 
    apr_runningLeft = r_this.papr_runningLeft;
    apr_runningRight = r_this.papr_runningRight;
+#ifdef __amigaos__
+   /* Not left unset should e_lastDirection be NONE. */
+   pr_sprite = r_this.pr_defaultFigure;
+#endif
 
    // Remember that only one of those will be > 0
    i_index =
@@ -1660,9 +1664,16 @@ int Game_done() {
  * and calls the game's outer loop.
  */
 
+#ifdef __amigaos__
+void XLode_amigaInit(void);   /* amiga/progdir.c */
+#endif
+
 int main(int i_argc_, char* asz_argv_) {
    int i;
 
+#ifdef __amigaos__
+   XLode_amigaInit();
+#endif
    printf("\nXLode\n");
    printf("(C)2001 Hisham Muhammad\n");
    XLode_debug("Opening stages... ");
