@@ -2,18 +2,25 @@
 #
 #   make -f amiga/Makefile.amigaos STOVE=/path/to/os32-gcc16/prefix \
 #        NDK=/path/to/gfopensdk/OpenNDK/Include_H \
-#        ACSDL=/path/to/amicradle-guest/gameports/acsdl12
+#        ACSDL=/path/to/amicradle-guest/gameports/acsdl12 \
+#        ACSDLLIB=/path/to/acsdl12/build ACGAME=/path/to/acgame \
+#        ACGAMELIB=/path/to/acgame/build-amiga
 #
 # STOVE is GFOpenAmigaGCC 16.2.0-open4 or later. ACSDL is acsdl12, built with
 # its own Makefile.amigaos. The game is built at 320x200 (SIZE_320_200) from
 # the 8-bit PNGs in amiga/gfx (made from 320/*.bmp by amiga/convert_gfx.py).
+# acsdl12 is built with ACG= into ACSDLLIB, without its own copy of ACGame:
+# the game gets ACGame from acgame.library, through ACGAMELIB's libacgame.a
+# (DalsinAI/acgame's stubs). package/acgame-deps.sh builds both.
 # Output: build/amigaos/XLode/ with the program, its pictures, sounds and
 # stages beside it, and the icons.
 
 STOVE   ?= $(HOME)/AmiCradle/stoves/os32-gcc16/prefix
 NDK     ?= $(HOME)/AmiCradle/gfopensdk/OpenNDK/Include_H
 ACSDL   ?= ../amicradle-guest/gameports/acsdl12
+ACSDLLIB ?= $(ACSDL)/build/amigaos
 ACGAME  ?= $(ACSDL)/../acgame
+ACGAMELIB ?= $(ACGAME)/build-amiga
 CC      = $(STOVE)/bin/m68k-amigaos-gcc
 CPU     ?= -m68040 -m68881
 OPT     ?= -O2 -fomit-frame-pointer
@@ -32,7 +39,7 @@ ICONS   = amiga/icons/XLode-drawer.info amiga/icons/xlode.info amiga/icons/ReadM
 all: $(OUT)/xlode
 
 $(OUT)/xlode: $(OBJS) $(DATA) $(ICONS) AMIGA_PORT.md | $(OUT)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(ACSDL)/build/amigaos/libacsdl12.a -lm
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(ACSDLLIB)/libacsdl12.a $(ACGAMELIB)/libacgame.a -lm
 	cp $(DATA) $(OUT)/
 	cp AMIGA_PORT.md $(OUT)/ReadMe
 	cp LICENSE $(OUT)/LICENSE
