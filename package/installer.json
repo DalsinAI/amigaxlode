@@ -1,0 +1,13 @@
+{
+  "name": "XLode",
+  "version": "0.0-amiga2",
+  "drawer": "XLode",
+  "program": "xlode",
+  "cpu": "68040",
+  "fpu": true,
+  "space": 4000000,
+  "modules": [],
+  "keep": [],
+  "parent": "Work:Games",
+  "badge": "../amiga/icons/art/xlode.png"
+}

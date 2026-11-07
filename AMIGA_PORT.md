@@ -9,11 +9,25 @@ built on acsdl12 (SDL 1.2, SDL_image and SDL_mixer on ACGame and AHI).
     make -f amiga/Makefile.amigaos \
         STOVE=/path/to/openamigagcc-16.2.0-open4-x86_64-linux \
         NDK=/path/to/gfopensdk/OpenNDK/Include_H \
-        ACSDL=/path/to/amicradle-guest/gameports/acsdl12
+        ACSDL=/path/to/amicradle-guest/gameports/acsdl12 \
+        ACSDLLIB=/path/to/acsdl12/build \
+        ACGAME=/path/to/acgame ACGAMELIB=/path/to/acgame/build-amiga
 
-acsdl12 is built first with its own `Makefile.amigaos`. This gives
+acsdl12 is built first with its own `Makefile.amigaos`, without its own
+copy of ACGame (`ACG=`): the game links acgame.library's stubs
+(`libacgame.a`). `package/build-amiga.sh` (STOVE and OUT set) makes the
+release archive with its installer, fetching and building acgame,
+acsdl12 and zlib at pinned commits. The Makefile gives
 `build/amigaos/XLode/` (and `XLode.info` beside it): the program `xlode`,
 its pictures, sounds and stages, this ReadMe and the licence, with icons.
+
+## Installing
+
+Unpack the archive anywhere (on AmiCradle: `SYS:Utilities/OpenCompress x
+xlode-...lha RAM:`), then double-click `Install-XLode` beside the `XLode`
+drawer: it asks where to put the game (`Work:Games` by default) and makes
+or updates the drawer. The drawer's `Libs` holds the acgame.library the
+game was built against, and the game opens that copy first.
 
 ## Playing
 
