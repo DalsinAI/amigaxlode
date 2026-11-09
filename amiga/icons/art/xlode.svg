@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff8c0"/><stop offset=".55" stop-color="#f0c020"/><stop offset="1" stop-color="#8a5a00"/></linearGradient><linearGradient id="m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6a7480"/><stop offset=".5" stop-color="#e0e8f0"/><stop offset="1" stop-color="#4a545e"/></linearGradient><linearGradient id="w" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a3a14"/><stop offset=".5" stop-color="#b07a3a"/><stop offset="1" stop-color="#4a2a08"/></linearGradient></defs>
+<path d="M4 58 L12 46 L32 46 L24 58 Z" fill="url(#g)" stroke="#101418" stroke-width="1.5" stroke-linejoin="round"/><path d="M26 58 L34 46 L54 46 L46 58 Z" fill="url(#g)" stroke="#101418" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M15 44 L23 32 L43 32 L35 44 Z" fill="url(#g)" stroke="#101418" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M13 50 L28 50 M36 50 L50 50 M24 36 L39 36" stroke="#fff" stroke-width="1.6" opacity=".8"/>
+<g transform="rotate(30 46 18)"><rect x="44" y="6" width="5" height="34" rx="2" fill="url(#w)" stroke="#101418" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M30 10 Q46 0 64 10 Q46 6 30 10 Z" fill="url(#m)" stroke="#101418" stroke-width="1.5" stroke-linejoin="round"/></g>
+</svg>
